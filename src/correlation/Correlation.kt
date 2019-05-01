@@ -2,6 +2,14 @@ package correlation
 
 import kotlin.math.absoluteValue
 
+fun main(args: Array<String>) {
+    val first = arrayOf(0.0,0.0,1.0,1.0,1.0,1.0,1.0,0.0,0.0,1.0,0.0,0.0,1.0)
+    val second = arrayOf(0.0,1.0,0.0,0.0,1.0,1.0,1.0,1.0,0.0,0.0,0.0,1.0,0.0)
+
+    val result = Correlation.crossValues(first,second,0.0,Correlation.coefficient(first,second))
+
+    print(result.max())
+}
 
 object Correlation {
 
@@ -19,7 +27,7 @@ object Correlation {
             }
         }
 
-        return Math.sqrt(firstSum * secondSum);
+        return Math.sqrt(firstSum * secondSum)
     }
 
     fun values(first: Array<Double>, second: Array<Double>, coefficient: Double = 1.0) = correlation(first = first,
@@ -27,7 +35,7 @@ object Correlation {
 
     fun value(first: Array<Double>, second: Array<Double>) = value(
         0,
-        Math.max(first.size, second.size),
+        Math.max(first.size, second.size)-1,
         first,
         second
     )
@@ -177,16 +185,16 @@ object Correlation {
             }
 
         // check, if the function is reach the end of correlation
-        if (step == 2 * length) {
+        return if (step == 2 * length) {
             // done, return the correlation values
-            return result
+            result
         } else {
             // otherwise calculates the correlation value for current phase and divide it by coefficient
             val sum = value(start, end, first, second)
             result[step - 1] = sum / coefficient
 
             // recursively start the next phase
-            return correlation(ds, de, first, second, result, coefficient)
+            correlation(ds, de, first, second, result, coefficient)
         }
     }
 
@@ -202,9 +210,9 @@ object Correlation {
         // rxy [n+1] = X2 Y n-1 + X3 Y n-2+ … + Xn-1 Y 2 + Xn Y 1
 
         for (d in 0..(end - start)) {
-
+            // todo check why j is not used
             val firstValue = if (first.size > i) first[i] else 0.0
-            val secondValue = if (second.size > i) second[i] else 0.0
+            val secondValue = if (second.size > j) second[j] else 0.0 // here i is changed with j, related with todo
 
             sum += firstValue * secondValue
 
