@@ -3,10 +3,10 @@ package correlation
 import kotlin.math.absoluteValue
 
 fun main(args: Array<String>) {
-    val first = arrayOf(0.0,0.0,1.0,1.0,1.0,1.0,1.0,0.0,0.0,1.0,0.0,0.0,1.0)
-    val second = arrayOf(0.0,1.0,0.0,0.0,1.0,1.0,1.0,1.0,0.0,0.0,0.0,1.0,0.0)
+    val source = arrayOf(0.0,0.0,1.0,1.0,1.0,1.0,1.0,0.0,0.0,1.0,0.0,0.0,1.0)
+    val sample = arrayOf(0.0,1.0,0.0)
 
-    val result = Correlation.crossValues(first,second,0.0,Correlation.coefficient(first,second))
+    val result = Correlation.crossValues(sample,source,0.0,Correlation.coefficient(sample,source))
 
     print(result.max())
 }

@@ -1,5 +1,7 @@
 package diffCodes;
 
+import java.awt.*;
+
 public class DiffCodes {
 
 
@@ -13,19 +15,26 @@ public class DiffCodes {
 
         int elitismCount = 2;
 
-        int singleCodeLength = 5;
+        int singleCodeLength = 1024;
 
-        int codesCount = 10;
+        int codesCount = 32;
+
+        int effectiveGenerationOffset = 500;
 
         int generation = 0;
 
-        GeneticAlgorithm ga = new GeneticAlgorithm(populationSize,mutationRate,crossoverRate,elitismCount);
+        GeneticAlgorithm ga = new GeneticAlgorithm(populationSize,mutationRate,crossoverRate,elitismCount, effectiveGenerationOffset);
 
         CodesPopulation population = ga.initPopulation(singleCodeLength,codesCount);
 
         ga.evaluate(population);
 
         while (!ga.willTerminate(population)){
+
+            CodeIndividual fittest = population.getFittest(0);
+
+            System.out.println("fitness= " +fittest.getFitness() + " " + fittest.toString());
+
             population = ga.crossover(population);
 
             population = ga.mutate(population);
@@ -34,5 +43,9 @@ public class DiffCodes {
 
             generation++;
         }
+
+        System.out.println("Found solution in " + generation + " generationNumber");
+        System.out.println("Best solution: " + population.getFittest(0).toString());
+
     }
 }
