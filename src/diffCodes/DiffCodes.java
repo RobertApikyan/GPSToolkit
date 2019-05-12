@@ -4,22 +4,21 @@ import java.awt.*;
 
 public class DiffCodes {
 
-
     public static void main(String[] args) {
 
         int populationSize = 100;
 
-        double mutationRate = 0.001;
+        double mutationRate = 0.05;
 
         double crossoverRate = 0.95;
 
-        int elitismCount = 2;
+        int elitismCount = 1;
 
         int singleCodeLength = 1024;
 
         int codesCount = 32;
 
-        int effectiveGenerationOffset = 500;
+        int effectiveGenerationOffset = 2000;
 
         int generation = 0;
 

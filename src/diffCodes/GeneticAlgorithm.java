@@ -11,7 +11,7 @@ public class GeneticAlgorithm {
     private double crossoverRate;
     private int elitismCount;
     private int effectiveGenerationOffset;
-    private int currentEffectiveGenerationCounter =0;
+    private int currentEffectiveGenerationCounter = 0;
     private double currentEffectiveGenerationFitness = -1.0;
 
 
@@ -28,7 +28,7 @@ public class GeneticAlgorithm {
         return new CodesPopulation(populationSize, singleCodeLength, codesCount);
     }
 
-    public CodeIndividual selectParent(CodesPopulation population){
+    public CodeIndividual selectParent(CodesPopulation population) {
         CodeIndividual[] individuals = population.getCodes();
 
         double populationFitness = population.getPopulationFitness();
@@ -37,14 +37,14 @@ public class GeneticAlgorithm {
         double roulettePosition = 0.0;
 
         for (CodeIndividual individual : individuals) {
-            roulettePosition+=individual.getFitness();
+            roulettePosition += individual.getFitness();
 
-            if (roulettePosition >= rouletteStopPosition){
+            if (roulettePosition >= rouletteStopPosition) {
                 return individual;
             }
         }
 
-        return individuals[individuals.length -1];
+        return individuals[individuals.length - 1];
     }
 
     public void evaluate(CodesPopulation population) {
@@ -62,19 +62,19 @@ public class GeneticAlgorithm {
         CodeIndividual fittest = population.getFittest(0);
         double fitness = fittest.getFitness();
 
-        if (fitness > 0.95){
-            Toolkit.getDefaultToolkit().beep();
-            FileUtils.writeCodes(fittest);
-            return true;
-        }
+//        if (fitness > 0.95){
+//            Toolkit.getDefaultToolkit().beep();
+//            FileUtils.writeCodes(fittest);
+//            return true;
+//        }
 
-        if (currentEffectiveGenerationFitness != fitness){
+        if (currentEffectiveGenerationFitness != fitness) {
             currentEffectiveGenerationFitness = fitness;
             currentEffectiveGenerationCounter = effectiveGenerationOffset;
             return false;
-        }else{
+        } else {
             currentEffectiveGenerationCounter--;
-            if (currentEffectiveGenerationCounter == 0){
+            if (currentEffectiveGenerationCounter == 0) {
                 Toolkit.getDefaultToolkit().beep();
                 FileUtils.writeCodes(fittest);
             }
@@ -89,15 +89,15 @@ public class GeneticAlgorithm {
         for (int firstParentIndex = 0; firstParentIndex < population.getSize(); firstParentIndex++) {
             CodeIndividual firstParent = population.getFittest(firstParentIndex);
 
-            if (firstParentIndex >= elitismCount && crossoverRate > Math.random()){
+            if (firstParentIndex >= elitismCount && crossoverRate > Math.random()) {
                 // crossover
                 CodeIndividual secondParent = selectParent(population);
 
-                CodeIndividual childIndividual = cross(firstParent,secondParent);
+                CodeIndividual childIndividual = cross(firstParent, secondParent);
 
-                newPopulation.setCode(firstParentIndex,childIndividual);
-            }else{
-                newPopulation.setCode(firstParentIndex,firstParent);
+                newPopulation.setCode(firstParentIndex, childIndividual);
+            } else {
+                newPopulation.setCode(firstParentIndex, firstParent);
             }
         }
         return newPopulation;
@@ -107,15 +107,15 @@ public class GeneticAlgorithm {
         double firstFitness = firstParent.getFitness();
         double secondFitness = secondParent.getFitness();
 
-        CodeIndividual child = new CodeIndividual(firstParent.getSingleCodeLength(),firstParent.getCodesCount());
+        CodeIndividual child = new CodeIndividual(firstParent.getSingleCodeLength(), firstParent.getCodesCount());
 
         for (int codeIndex = 0; codeIndex < child.getTotalLength(); codeIndex++) {
-            double firstRand = firstFitness*Math.random();
-            double secondRand = secondFitness*Math.random();
-            if (firstRand >= secondRand){
-                child.setCode(codeIndex,firstParent.getCode(codeIndex));
-            }else{
-                child.setCode(codeIndex,secondParent.getCode(codeIndex));
+            double firstRand = firstFitness * Math.random();
+            double secondRand = secondFitness * Math.random();
+            if (firstRand >= secondRand) {
+                child.setCode(codeIndex, firstParent.getCode(codeIndex));
+            } else {
+                child.setCode(codeIndex, secondParent.getCode(codeIndex));
             }
         }
 
@@ -129,22 +129,24 @@ public class GeneticAlgorithm {
 
             CodeIndividual individual = population.getFittest(populationIndex);
 
-            if (populationIndex >= elitismCount){
+            if (populationIndex >= elitismCount) {
                 // mutate
                 for (int individualIndex = 0; individualIndex < individual.getTotalLength(); individualIndex++) {
-                    if (mutationRate > Math.random()){
+                    if (mutationRate > Math.random()) {
                         //mutate
                         double newGene = 1.0;
-                        if (individual.getCode(individualIndex) == 1.0){
+                        if (individual.getCode(individualIndex) == 1.0) {
                             newGene = -1.0;
                         }
-                        individual.setCode(individualIndex,newGene);
-                    }else{
-                        newPopulation.setCode(populationIndex,individual);
+                        individual.setCode(individualIndex, newGene);
+
+                        newPopulation.setCode(populationIndex, individual);
+                    } else {
+                        newPopulation.setCode(populationIndex, individual);
                     }
                 }
-            }else{
-                newPopulation.setCode(populationIndex,individual);
+            } else {
+                newPopulation.setCode(populationIndex, individual);
             }
 
         }
@@ -164,18 +166,19 @@ public class GeneticAlgorithm {
 
                 if (sampleNumber != sourceNumber) {
                     double[] sample = individual.getSingleCodeChunk(sampleNumber);
-                    double coefficient =  Correlation.coefficient(source, sample);
-                    double corrValue = Correlation.value(0,source.length-1,source, sample)/coefficient;
+                    double coefficient = Correlation.coefficient(source, sample);
+                    double corrValue = Correlation.value(0, source.length - 1, source, sample);
 
                     // maximum correlation value
-                    sourceFitness += (1 - corrValue)/individual.getCodesCount();
+                    sourceFitness += (1 - corrValue/coefficient) / individual.getCodesCount();
+
                 }
             }
 
             overallFitness += sourceFitness;
         }
 
-        overallFitness =  overallFitness / individual.getCodesCount();
+        overallFitness = overallFitness / individual.getCodesCount();
 
         return overallFitness;
     }
